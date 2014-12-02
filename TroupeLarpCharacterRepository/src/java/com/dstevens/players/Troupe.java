@@ -1,15 +1,25 @@
 package com.dstevens.players;
 
-import static com.dstevens.collections.Sets.*;
+import static com.dstevens.collections.Sets.set;
+import static com.dstevens.collections.Sets.setWith;
+import static com.dstevens.collections.Sets.setWithout;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Set;
 import java.util.function.Function;
-
-import javax.persistence.*;
 
 import com.dstevens.characters.PlayerCharacter;
 import com.dstevens.persistence.auditing.Auditable;
 import com.dstevens.utilities.ObjectExtensions;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
 @Table(name="Troupe")
@@ -20,9 +30,6 @@ public class Troupe implements Auditable<Troupe>, Comparable<Troupe> {
     
     @Column(name="name")
     private String name;
-    
-    @Column(name="setting")
-    private Setting setting;
     
     @OneToMany(cascade={CascadeType.ALL})
     @JoinColumn(name="troupe_id", referencedColumnName="id")
@@ -38,17 +45,16 @@ public class Troupe implements Auditable<Troupe>, Comparable<Troupe> {
     //Used only for hibernate
     @Deprecated
     public Troupe() {
-        this(null, null, null);
+        this(null, null);
     }
     
-    Troupe(String id, String name, Setting setting) {
-        this(id, name, setting, set(), set(), null);
+    Troupe(String id, String name) {
+        this(id, name, set(), set(), null);
     }
     
-    private Troupe(String id, String name, Setting setting, Set<Player> players, Set<PlayerCharacter> characters, Date deleteTimestamp) {
+    private Troupe(String id, String name, Set<Player> players, Set<PlayerCharacter> characters, Date deleteTimestamp) {
         this.id = id;
         this.name = name;
-        this.setting = setting;
         this.players = players;
         this.characters = characters;
         this.deleteTimestamp = deleteTimestamp;
@@ -67,26 +73,17 @@ public class Troupe implements Auditable<Troupe>, Comparable<Troupe> {
         return name;
     }
 
-    public Troupe withSetting(Setting setting) {
-        this.setting = setting;
-        return this;
-    }
-    
-    public Setting getSetting() {
-        return setting;
-    }
-
     public Troupe withPlayer(Player player) {
         Set<Player> setWith = setWith(players, player);
-        return new Troupe(id, name, setting, setWith, characters, deleteTimestamp);
+        return new Troupe(id, name, setWith, characters, deleteTimestamp);
     }
     
     public Troupe withoutPlayer(Player player) {
-        return new Troupe(id, name, setting, setWithout(players, player), characters, deleteTimestamp);
+        return new Troupe(id, name, setWithout(players, player), characters, deleteTimestamp);
     }
     
     public Troupe clearPlayers() {
-        return new Troupe(id, name, setting, set(), characters, deleteTimestamp);
+        return new Troupe(id, name, set(), characters, deleteTimestamp);
     }
     
     public Set<Player> getPlayers() {
@@ -94,11 +91,11 @@ public class Troupe implements Auditable<Troupe>, Comparable<Troupe> {
     }
     
     public Troupe withCharacter(PlayerCharacter character) {
-        return new Troupe(id, name, setting, players, setWith(characters, character), deleteTimestamp);
+        return new Troupe(id, name, players, setWith(characters, character), deleteTimestamp);
     }
     
     public Troupe withoutCharacter(PlayerCharacter character) {
-        return new Troupe(id, name, setting, players, setWithout(characters, character), deleteTimestamp);
+        return new Troupe(id, name, players, setWithout(characters, character), deleteTimestamp);
     }
     
     public Set<PlayerCharacter> getCharacters() {
@@ -106,11 +103,11 @@ public class Troupe implements Auditable<Troupe>, Comparable<Troupe> {
     }
 
     public Troupe delete(Date deleteTimestamp) {
-        return new Troupe(id, name, setting, players, characters, deleteTimestamp);
+        return new Troupe(id, name, players, characters, deleteTimestamp);
     }
     
     public Troupe undelete() {
-        return new Troupe(id, name, setting, players, characters, null);
+        return new Troupe(id, name, players, characters, null);
     }
     
     @Override

@@ -15,8 +15,8 @@ public class TroupeFactory {
         this.idSupplier = idSupplier;
     }
     
-    public Troupe createTroupe(String name, Setting setting) {
-        return new Troupe(idSupplier.get(), name, setting);
+    public Troupe createTroupe(String name) {
+        return new Troupe(idSupplier.get(), name);
     }
     
     
