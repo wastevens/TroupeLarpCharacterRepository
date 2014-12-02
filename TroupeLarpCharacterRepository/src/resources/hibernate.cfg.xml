@@ -1,0 +1,16 @@
+
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <mapping package="com.dstevens"/>
+    <mapping class="com.dstevens.players.Troupe"/>
+    <mapping class="com.dstevens.players.Player"/>
+    <mapping class="com.dstevens.characters.PlayerCharacter"/>
+    <mapping class="com.dstevens.characters.changes.SetTrait"/>
+    <mapping class="com.dstevens.characters.changes.RemoveTrait"/>
+    <mapping class="com.dstevens.persistence.auditing.AuditEvent"/>
+  </session-factory>
+</hibernate-configuration>
