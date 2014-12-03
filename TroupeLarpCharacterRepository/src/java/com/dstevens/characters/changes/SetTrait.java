@@ -55,7 +55,7 @@ public abstract class SetTrait {
     }
     
     public final PlayerCharacter approve(PlayerCharacter character) {
-        return status.apply(character, this);
+        return status.approve(character, this);
     }
     
     public final PlayerCharacter deny(PlayerCharacter character) {
