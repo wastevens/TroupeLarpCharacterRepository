@@ -27,10 +27,10 @@ public class PlayerCharacter implements Auditable<PlayerCharacter>, Comparable<P
     private final String id;
     
     @Column(name="deleted_at")
-    private final Date deleteTimestamp;
+    private Date deleteTimestamp;
     
     @Column(name="name")
-    private final String name;
+    private String name;
     
     @OneToMany(cascade={CascadeType.ALL})
     @OrderColumn(name="order_by")
@@ -46,7 +46,7 @@ public class PlayerCharacter implements Auditable<PlayerCharacter>, Comparable<P
         this(id, name, null);
     }
     
-    private PlayerCharacter(String id, String name, Date deleteTimestamp) {
+    protected PlayerCharacter(String id, String name, Date deleteTimestamp) {
 		this.id = id;
 		this.name = name;
 		this.deleteTimestamp = deleteTimestamp;
@@ -58,7 +58,8 @@ public class PlayerCharacter implements Auditable<PlayerCharacter>, Comparable<P
     }
     
     public PlayerCharacter withName(String name) {
-        return new PlayerCharacter(id,  name, deleteTimestamp);
+    	this.name = name;
+    	return this;
     }
     
     public String getName() {
@@ -67,16 +68,22 @@ public class PlayerCharacter implements Auditable<PlayerCharacter>, Comparable<P
     
     @Override
     public PlayerCharacter delete(Date timestamp) {
-        return new PlayerCharacter(id, name, timestamp);
+    	this.deleteTimestamp = timestamp;
+    	return this;
     }
 
     @Override
     public PlayerCharacter undelete() {
-        return new PlayerCharacter(id,  name, null);
+    	this.deleteTimestamp = null;
+    	return this;
     }
     
     public boolean isDeleted() {
         return deleteTimestamp != null;
+    }
+    
+    protected Date getDeleteTimestamp() {
+    	return deleteTimestamp;
     }
     
     @Override
