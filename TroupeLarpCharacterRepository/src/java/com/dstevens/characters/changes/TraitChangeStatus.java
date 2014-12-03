@@ -5,48 +5,49 @@ import com.dstevens.characters.PlayerCharacter;
 public enum TraitChangeStatus {
 
     PENDING() {
-        @Override
-        public PlayerCharacter approve(PlayerCharacter character, SetTrait traitToApprove) {
-        	SetTrait currentTraitToApprove = traitToApprove;
+		@Override
+		public <PC extends PlayerCharacter> PC approve(PC character, SetTrait<PC> traitToApprove) {
+        	SetTrait<PC> currentTraitToApprove = traitToApprove;
         	while(currentTraitToApprove != null) {
         		currentTraitToApprove.setStatus(APPLIED);
         		character = currentTraitToApprove.apply(character);
         		currentTraitToApprove = currentTraitToApprove.associatedTrait();
         	}
             return character;
-        }
-        
-        @Override
-        public PlayerCharacter deny(PlayerCharacter character, SetTrait traitToDeny) {
-        	traitToDeny.setStatus(TraitChangeStatus.DENIED);
-            return character;
-        }
+		}
+
+		@Override
+		public <PC extends PlayerCharacter> PC deny(PC character, SetTrait<PC> traitToDeny) {
+			traitToDeny.setStatus(TraitChangeStatus.DENIED);
+			return character;
+		}
+
     },
     DENIED() {
         @Override
-        public PlayerCharacter approve(PlayerCharacter character, SetTrait traitToApprove) {
+        public <PC extends PlayerCharacter> PC approve(PC character, SetTrait<PC> traitToApprove) {
             return character;
         }
 
         @Override
-        public PlayerCharacter deny(PlayerCharacter character, SetTrait traitToDeny) {
+        public <PC extends PlayerCharacter> PC deny(PC character, SetTrait<PC> traitToDeny) {
             return character;
         }
     },
     APPLIED() {
         @Override
-        public PlayerCharacter approve(PlayerCharacter character, SetTrait traitToApprove) {
+        public <PC extends PlayerCharacter> PC approve(PC character, SetTrait<PC> traitToApprove) {
             return character;
         }
 
         @Override
-        public PlayerCharacter deny(PlayerCharacter character, SetTrait traitToDeny) {
+        public <PC extends PlayerCharacter> PC deny(PC character, SetTrait<PC> traitToDeny) {
             return character;
         }
     };
     
-    public abstract PlayerCharacter approve(PlayerCharacter character, SetTrait traitToApprove);
+    public abstract <PC extends PlayerCharacter> PC approve(PC character, SetTrait<PC> traitToApprove);
 
-	public abstract PlayerCharacter deny(PlayerCharacter character, SetTrait traitToDeny);
+	public abstract <PC extends PlayerCharacter> PC deny(PC character, SetTrait<PC> traitToDeny);
     
 }

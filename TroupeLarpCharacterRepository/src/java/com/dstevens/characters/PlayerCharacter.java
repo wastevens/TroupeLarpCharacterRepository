@@ -34,7 +34,7 @@ public class PlayerCharacter implements Auditable<PlayerCharacter>, Comparable<P
     
     @OneToMany(cascade={CascadeType.ALL})
     @OrderColumn(name="order_by")
-    private final List<SetTrait> traitChangeEvents;
+    private final List<SetTrait<PlayerCharacter>> traitChangeEvents;
     
     //Hibernate only
     @Deprecated
@@ -114,22 +114,25 @@ public class PlayerCharacter implements Auditable<PlayerCharacter>, Comparable<P
                       compare(this, that);
     }
     
-    public List<SetTrait> getTraitChangeEvents() {
+    public List<SetTrait<PlayerCharacter>> getTraitChangeEvents() {
         return traitChangeEvents;
     }
     
-    public PlayerCharacter withTraitChangeEvent(SetTrait event) {
+    public PlayerCharacter withTraitChangeEvent(SetTrait<PlayerCharacter> event) {
         this.traitChangeEvents.add(event);
         return this;
     }
     
-    public PlayerCharacter approvePendingChange(SetTrait event) {
+    public PlayerCharacter approvePendingChange(SetTrait<PlayerCharacter> event) {
         event.approve(this);
         return this;
     }
     
     public PlayerCharacter approvePendingChanges() {
-        this.traitChangeEvents.forEach((SetTrait t) -> t.approve(this));
+    	for (SetTrait<PlayerCharacter> t : traitChangeEvents) {
+			t.approve(this);
+		}
+        this.traitChangeEvents.forEach((SetTrait<PlayerCharacter> t) -> t.approve(this));
         return this;
     }
 }

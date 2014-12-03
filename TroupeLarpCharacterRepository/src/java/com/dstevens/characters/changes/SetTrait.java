@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Inheritance
 @DiscriminatorColumn(name="trait_change_type")
 @Table(name="TraitChanges")
-public abstract class SetTrait {
+public abstract class SetTrait<PC extends PlayerCharacter> {
 
     @Id
     private final String id;
@@ -27,7 +27,7 @@ public abstract class SetTrait {
     private TraitChangeStatus status;
     
     @OneToOne(cascade={CascadeType.ALL})
-    private SetTrait child;
+    private SetTrait<PC> child;
     
     //Hibernate only
     @SuppressWarnings("unused")
@@ -41,24 +41,24 @@ public abstract class SetTrait {
         this.status = status;
     }
     
-    public SetTrait and(SetTrait andTrait) {
+    public SetTrait<PC> and(SetTrait<PC> andTrait) {
     	if(child != null) {
-    		this.child.and(andTrait);
+			this.child.and(andTrait);
     	} else {
     		this.child = andTrait;
     	}
     	return this;
     }
     
-    public SetTrait remove() {
-    	return new RemoveTrait(this);
+    public SetTrait<? extends PC> remove() {
+    	return new RemoveTrait<PC>(this);
     }
     
-    public final PlayerCharacter approve(PlayerCharacter character) {
-        return status.approve(character, this);
+    public final PC approve(PC character) {
+    	return status.approve(character, this);
     }
     
-    public final PlayerCharacter deny(PlayerCharacter character) {
+    public final PC deny(PC character) {
         return status.deny(character, this);
     }
 
@@ -66,7 +66,7 @@ public abstract class SetTrait {
         return child != null;
     }
 
-    public SetTrait associatedTrait() {
+    public SetTrait<PC> associatedTrait() {
         return child;
     }
     
@@ -82,8 +82,8 @@ public abstract class SetTrait {
         return this.status.equals(TraitChangeStatus.PENDING);
     }
 
-    public abstract PlayerCharacter apply(PlayerCharacter character);
-    public abstract PlayerCharacter remove(PlayerCharacter character);
+    public abstract PC apply(PC character);
+    public abstract PC remove(PC character);
     public abstract String describe();
     
     @Override
