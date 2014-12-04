@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Inheritance
 @DiscriminatorColumn(name="trait_change_type")
 @Table(name="TraitChanges")
-public abstract class SetTrait<PC extends PlayerCharacter> {
+public abstract class SetTrait {
 
     @Id
     private final String id;
@@ -27,7 +27,7 @@ public abstract class SetTrait<PC extends PlayerCharacter> {
     private TraitChangeStatus status;
     
     @OneToOne(cascade={CascadeType.ALL})
-    private SetTrait<PC> child;
+    private SetTrait child;
     
     //Hibernate only
     @SuppressWarnings("unused")
@@ -41,7 +41,7 @@ public abstract class SetTrait<PC extends PlayerCharacter> {
         this.status = status;
     }
     
-    public SetTrait<PC> and(SetTrait<PC> andTrait) {
+    public SetTrait and(SetTrait andTrait) {
     	if(child != null) {
 			this.child.and(andTrait);
     	} else {
@@ -50,15 +50,15 @@ public abstract class SetTrait<PC extends PlayerCharacter> {
     	return this;
     }
     
-    public SetTrait<? extends PC> remove() {
-    	return new RemoveTrait<PC>(this);
+    public SetTrait remove() {
+    	return new RemoveTrait(this);
     }
     
-    public final PC approve(PC character) {
+    public final PlayerCharacter approve(PlayerCharacter character) {
     	return status.approve(character, this);
     }
     
-    public final PC deny(PC character) {
+    public final PlayerCharacter deny(PlayerCharacter character) {
         return status.deny(character, this);
     }
 
@@ -66,7 +66,7 @@ public abstract class SetTrait<PC extends PlayerCharacter> {
         return child != null;
     }
 
-    public SetTrait<PC> associatedTrait() {
+    public SetTrait associatedTrait() {
         return child;
     }
     
@@ -82,8 +82,14 @@ public abstract class SetTrait<PC extends PlayerCharacter> {
         return this.status.equals(TraitChangeStatus.PENDING);
     }
 
-    public abstract PC apply(PC character);
-    public abstract PC remove(PC character);
+    public PlayerCharacter apply(PlayerCharacter character) {
+    	throw new IllegalArgumentException("Could not apply " + this + " to " + character);
+    }
+    
+    public PlayerCharacter remove(PlayerCharacter character) {
+    	throw new IllegalArgumentException("Could not remove " + this + " from " + character);
+    }
+    
     public abstract String describe();
     
     @Override
